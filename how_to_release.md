@@ -33,7 +33,7 @@ The workflow runs when you push a tag.
 The Flatpak manifest lives in [flathub/io.github.LargeModGames.spotatui](https://github.com/flathub/io.github.LargeModGames.spotatui), not here. Flathub builds offline, so each stable release needs a PR there:
 
 1. Set `tag` and `commit` of the `git` source in the manifest to the new tag.
-2. Regenerate the vendored sources from that tag with [flatpak-builder-tools](https://github.com/flatpak/flatpak-builder-tools): `flatpak-cargo-generator desktop/Cargo.lock -o cargo-sources.json` and `flatpak-node-generator npm gui/package-lock.json -o node-sources.json`.
+2. Regenerate the vendored sources from that tag with [flatpak-builder-tools](https://github.com/flatpak/flatpak-builder-tools): `flatpak-cargo-generator desktop/Cargo.lock -o cargo-sources.json` and `flatpak-node-generator npm gui/package-lock.json -o node-sources.json`. Then drop the Playwright browsers that the node generator adds for the `@playwright/test` dev dependency (several hundred MB; the build runs only `vite build`): `jq '[.[] | select(((.dest // "") | test("ms-playwright")) | not)]' node-sources.json > tmp.json && mv tmp.json node-sources.json`.
 3. Open the PR. Flathub's bot builds it; merge once the build passes.
 
 A Flatpak app does not update itself: the desktop app skips its updater when `FLATPAK_ID` is set.

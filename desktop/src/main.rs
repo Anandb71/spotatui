@@ -53,6 +53,11 @@ fn main() -> anyhow::Result<()> {
   if std::env::var_os("WEBKIT_DISABLE_DMABUF_RENDERER").is_none() {
     std::env::set_var("WEBKIT_DISABLE_DMABUF_RENDERER", "1");
   }
+  // GTK takes the Wayland app ID from the program name: in a Flatpak it must match the .desktop file.
+  #[cfg(target_os = "linux")]
+  if let Ok(id) = std::env::var("FLATPAK_ID") {
+    glib::set_prgname(Some(id.as_str()));
+  }
   let runtime = tokio::runtime::Builder::new_multi_thread()
     .enable_all()
     .build()?;
