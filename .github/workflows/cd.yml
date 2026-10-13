@@ -821,9 +821,8 @@ jobs:
           jq '[.[] | select(((.dest // "") | test("ms-playwright")) | not)]' node-sources.json > node-sources.tmp
           mv node-sources.tmp node-sources.json
           export COMMIT=$(git -C ../spotatui rev-parse HEAD)
-          # The first submission patched v0.45.0 and carried its own copies of the flatpak/ files.
-          yq -i '.modules[0].sources[0].tag = strenv(TAG) | .modules[0].sources[0].commit = strenv(COMMIT) | del(.modules[0].sources[] | select(.type == "patch" or .type == "file"))' "$APP_ID.yml"
-          git rm -q --ignore-unmatch flatpak-desktop.patch "$APP_ID.desktop" "$APP_ID.metainfo.xml"
+          yq -i '(.modules[].sources[]? | select(.type == "git" and .url == "https://github.com/LargeModGames/spotatui.git")) |= (.tag = strenv(TAG) | .commit = strenv(COMMIT))' "$APP_ID.yml"
+          yq -e '[.modules[].sources[]? | select(.type == "git" and .tag == strenv(TAG))] | length == 1' "$APP_ID.yml" > /dev/null
 
       - name: Open the update PR
         if: steps.clone.outputs.ready == 'true'
