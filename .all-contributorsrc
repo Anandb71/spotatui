@@ -544,6 +544,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "guardrails",
+      "name": "GuardRails",
+      "avatar_url": "https://avatars.githubusercontent.com/u/693795?v=4",
+      "profile": "http://guardrails.cs.virginia.edu",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
